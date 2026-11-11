@@ -13,6 +13,7 @@ export function createBufferedAudioProcessor(context, frames, inputs, outputs, r
     set: value => { callback = typeof value === 'function' ? value : null; }
   });
   function sliceBuffer(buffer, offset) {
+    if (!buffer) return null;
     return {
       length: frames,
       duration: frames / buffer.sampleRate,
