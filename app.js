@@ -2,6 +2,8 @@ const $ = id => document.getElementById(id);
 const CACHE = 'undertale-cache-v1';
 let runner, database, battle = false, started = false, ready = false;
 let lastSaves = '', saveTimer, relativeX = 0, relativeY = 0;
+const SAVE_JOURNAL = 'undertale-star-save-v1';
+let saveImporting = false;
 let fatal = false;
 const logLines = [];
 const held = new Map(), points = new Map();
@@ -62,12 +64,42 @@ function snapshot() {
   return files;
 }
 async function syncSaves() {
-  if (!runner || !database || !started || fatal) return;
+  if (!runner || !database || !started || fatal || saveImporting) return;
   const files = snapshot(), serialized = JSON.stringify(files);
   if (serialized === lastSaves) return;
+  const updatedAt=Date.now();
+  backupSaves(files,updatedAt);
   // Capture all files in one transaction so deletions are mirrored as well.
-  await store('readwrite', target => target.put(files,'current'));
+  await store('readwrite', target => {target.put(files,'current');return target.put({updatedAt},'meta');});
   lastSaves = serialized;
+  saveStatus(files,'Сохранено в браузере');
+}
+function backupSaves(files,updatedAt) {
+  // Synchronous journal survives page shutdown even if the IDB transaction is interrupted.
+  try{localStorage.setItem(SAVE_JOURNAL,JSON.stringify({format:'undertale-web-save-v1',files,updatedAt}));}
+  catch(error){log('Резервная запись недоступна: '+error.message);}
+}
+function saveStatus(files,message) {
+  $('save-state').textContent=files?.file0?.length ? message+' · продолжение через CONTINUE' : 'Пока нет сейва со звезды';
+}
+async function restoreSaves() {
+  let files=await store('readonly',target=>target.get('current'));
+  const meta=await store('readonly',target=>target.get('meta'));
+  let journal;
+  try{
+    journal=JSON.parse(localStorage.getItem(SAVE_JOURNAL));
+    if(journal){validateSave(journal);if(!Number.isFinite(journal.updatedAt)||journal.updatedAt<0)throw Error('Неверная дата сейва');}
+  }catch(error){log('Резервный сейв пропущен: '+error.message);journal=null;}
+  if(journal&&(!files||journal.updatedAt>=(meta?.updatedAt||0))){
+    files=journal.files;
+    await store('readwrite',target=>{target.put(files,'current');return target.put({updatedAt:journal.updatedAt},'meta');});
+  }
+  if(files){
+    validateSave({format:'undertale-web-save-v1',files});
+    for(const [name,bytes] of Object.entries(files))runner.FS.writeFile('/saves/'+name,new Uint8Array(bytes));
+  }
+  lastSaves=JSON.stringify(snapshot());
+  saveStatus(files,'Сейв со звезды восстановлен');
 }
 function validateSave(value) {
   if (!value || value.format !== 'undertale-web-save-v1' || !value.files || typeof value.files !== 'object' || Array.isArray(value.files)) throw Error('Неверный формат сейва');
@@ -155,9 +187,7 @@ async function prepare() {
       }
     }));
     progressRow('boot',4);
-    const saves = await store('readonly',target => target.get('current'));
-    if (saves) for(const [name,bytes] of Object.entries(validateSave({format:'undertale-web-save-v1',files:saves}))) runner.FS.writeFile('/saves/' + name,new Uint8Array(bytes));
-    lastSaves = JSON.stringify(snapshot());
+    await restoreSaves();
     runner.FS.chdir('/game');
     ready = true;progressRow('boot',5);
     report('Запуск игры…');
@@ -280,6 +310,7 @@ window.addEventListener('keydown',event => {
 window.addEventListener('keyup',event=>setKeys('keyboard-'+event.code,[]));
 window.addEventListener('blur',releaseAll);
 document.addEventListener('visibilitychange',()=>{if(document.hidden){releaseAll();syncSaves().catch(error=>report(error.message));}});
+window.addEventListener('pagehide',()=>{syncSaves().catch(error=>log(error.message));});
 for(const button of document.querySelectorAll('[data-key]')) {
   button.addEventListener('pointerdown',event=>{if(!started||fatal)return;event.preventDefault();button.setPointerCapture(event.pointerId);button.classList.add('pressed');setKeys('button-'+button.dataset.key+'-'+event.pointerId,[Number(button.dataset.key)]);resumeAudio();});
   for(const type of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(type,event=>{button.classList.remove('pressed');setKeys('button-'+button.dataset.key+'-'+event.pointerId,[]);});
@@ -292,8 +323,12 @@ function startGame() {
   const pointers=args.map(value=>runner.stringToNewUTF8(value));
   const argv=runner._malloc(pointers.length*4);pointers.forEach((pointer,index)=>runner.setValue(argv+index*4,pointer,'i32'));
   runner.ccall('startRunner','number',['number','number'],[pointers.length,argv],{async:true}).then(()=>report('Игра завершена. Обновите страницу для нового запуска.')).catch(failRuntime).finally(()=>{if(!fatal){pointers.forEach(pointer=>runner._free(pointer));runner._free(argv);}});
-  saveTimer=setInterval(()=>syncSaves().catch(error=>report('Не удалось сохранить: '+error.message)),1000);
+  beginSaveSync();
   $('canvas').focus();
+}
+function beginSaveSync(){
+  clearInterval(saveTimer);
+  saveTimer=setInterval(()=>syncSaves().catch(error=>report('Не удалось сохранить: '+error.message)),500);
 }
 let persistentRequested=false;
 function unlockOnGesture(){
@@ -338,7 +373,10 @@ $('import').onchange=async event=>{
     const file=event.target.files[0];if(!file)return;if(file.size>8*1024*1024)throw Error('Сейв слишком большой');
     const files=validateSave(JSON.parse(await file.text()));
     // Apply on reload so the running game's in-memory state cannot overwrite imported data.
-    clearInterval(saveTimer);releaseAll();await store('readwrite',target=>target.put(files,'current'));location.reload();
-  }catch(error){report(error.message);}
+    saveImporting=true;clearInterval(saveTimer);releaseAll();
+    const updatedAt=Date.now();
+    await store('readwrite',target=>{target.put(files,'current');return target.put({updatedAt},'meta');});
+    backupSaves(files,updatedAt);location.reload();
+  }catch(error){saveImporting=false;if(started&&!fatal)beginSaveSync();report(error.message);}
 };
 prepare();

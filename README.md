@@ -8,7 +8,7 @@ Fullscreen requests landscape orientation after entering fullscreen. When orient
 
 Mobile screens have persistent Z (confirm/interact), X (cancel/advance text), and C (menu) buttons on the right. Each captured pointer owns its key state, so movement and actions can be held together. Control reference: https://gamefaqs.gamespot.com/pc/180989-undertale/faqs/81196/controls
 
-All loader text uses local 8bitoperator JVE, with 8bitOperatorPlus for Cyrillic glyphs missing from the original face. Font credits and licensing are in `fonts/NOTICE.txt` and `fonts/OFL.txt`. Both fonts are precached for offline loading.
+All loader text uses local 8bitOperatorPlus Bold in pure white. Original 8bitoperator JVE is used for regular-weight pixel controls, with 8bitOperatorPlus for Cyrillic glyphs missing from the original face. Font credits and licensing are in `fonts/NOTICE.txt` and `fonts/OFL.txt`. All font files are precached for offline loading.
 
 Arrows move; Z confirms, X cancels, C opens the menu. Touch controls: visible left dynamic joystick; right tap confirms; right hold (300 ms) holds cancel. Moving cancels the pending hold. The gear button reveals settings, save management and the battle-mode switch. In battle mode, the joystick disappears and movement is relative, including over letterbox areas. This stock runner does not export battle/HP state; mode switching is manual, relative keyboard movement is approximate, and automatic damage vibration requires instrumenting the runner. No claim of pixel-perfect finger tracking or complete game compatibility is made.
 
@@ -16,7 +16,7 @@ The pixel-art launch screen has a flat red soul, overall progress and five compo
 
 ## Storage
 
-Game resources use Cache First in `undertale-cache-v1`. Browser storage is not permanent: the browser or user can remove it. Persistent storage is requested at game start. Saves are read from the runner's `/saves` directory and mirrored atomically into IndexedDB once per second. Export creates a portable JSON file; import replaces the browser snapshot and restarts. This runner uses WASMFS rather than GameMaker HTML5 localStorage.
+Game resources use Cache First in `undertale-cache-v1`. Browser storage is not permanent: the browser or user can remove it. Persistent storage is requested on the first gameplay gesture. The game's own yellow-star save writes `file0` in the runner's `/saves` directory. Save files are mirrored atomically into IndexedDB every 500 ms and when the page becomes hidden or receives pagehide. A synchronous localStorage journal is written before the asynchronous database transaction, so an interrupted shutdown can be recovered on the next load. Startup restores the newest validated journal/database snapshot into WASMFS before starting the game, preserving the normal CONTINUE flow from the last star. It does not invent checkpoints between stars. Settings show whether a star save exists. Export creates a portable JSON file; import replaces the browser snapshot and restarts. This runner uses WASMFS rather than GameMaker HTML5 localStorage.
 
 ## Deployment
 
