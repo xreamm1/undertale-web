@@ -11,7 +11,6 @@ const saveNames = /^(file\d+|undertale\.ini|system_information_\d+|config\.ini)$
 function log(text) {
   logLines.push(String(text));
   if(logLines.length>80)logLines.shift();
-  if(!started)$('startup-log').textContent=logLines.join('\n');
 }
 const report = text => { $(started ? 'play-status' : 'status').textContent = text; log(text); };
 function failRuntime(reason) {
