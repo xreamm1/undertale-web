@@ -1,5 +1,6 @@
 const $ = id => document.getElementById(id);
 const CACHE = 'undertale-cache-v1';
+const DOWNLOAD_WORKERS = navigator.maxTouchPoints>0 || matchMedia('(any-pointer: coarse)').matches ? 1 : 3;
 let runner, database, battle = false, started = false, ready = false;
 let lastSaves = '', saveTimer, relativeX = 0, relativeY = 0;
 const SAVE_JOURNAL = 'undertale-star-save-v1';
@@ -145,7 +146,7 @@ async function download(file, onBytes, game = true) {
 async function prepare() {
   $('retry').hidden = true;
   try {
-    $('device-info').textContent=`Browser · ${navigator.hardwareConcurrency || '?'} logical cores · 3 parallel downloads · Cache First`;
+    $('device-info').textContent=`Browser · ${navigator.hardwareConcurrency || '?'} logical cores · ${DOWNLOAD_WORKERS} downloads · Cache First`;
     const manifestResponse = await fetch('./assets.json');
     if (!manifestResponse.ok) throw Error('Манифест ресурсов недоступен');
     const manifest = await manifestResponse.json();
@@ -178,7 +179,7 @@ async function prepare() {
       $('status').textContent = 'Загрузка игровых ресурсов';
       $('detail').textContent = `${(loaded/1048576).toFixed(1)} / ${(total/1048576).toFixed(1)} МБ · ${manifest.files.length} файлов`;
     };
-    await Promise.all(Array.from({length:3},async () => {
+    await Promise.all(Array.from({length:DOWNLOAD_WORKERS},async () => {
       while(cursor < manifest.files.length){
         const file=manifest.files[cursor++];
         await download(file,amount=>update(file,amount));
@@ -318,7 +319,7 @@ function startGame() {
   if(!ready||started)return;
   started=true;document.body.classList.add('playing');$('launcher').hidden=true;$('player').hidden=false;
   resumeAudio();
-  const args=['--save-folder','/saves','/game/data.win'];
+  const args=['--save-folder','/saves','--load-type','load-per-chunk','--lazy-rooms','--lazy-textures','--lazy-audio','/game/data.win'];
   const pointers=args.map(value=>runner.stringToNewUTF8(value));
   const argv=runner._malloc(pointers.length*4);pointers.forEach((pointer,index)=>runner.setValue(argv+index*4,pointer,'i32'));
   runner.ccall('startRunner','number',['number','number'],[pointers.length,argv],{async:true}).then(()=>report('Игра завершена. Обновите страницу для нового запуска.')).catch(failRuntime).finally(()=>{if(!fatal){pointers.forEach(pointer=>runner._free(pointer));runner._free(argv);}});

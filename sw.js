@@ -1,4 +1,4 @@
-const SHELL = 'undertale-shell-v11';
+const SHELL = 'undertale-shell-v12';
 const DATA = 'undertale-cache-v1';
 const ROOT = new URL('./', self.location).href;
 const STATIC = ['./', './index.html', './style.css', './app.js', './assets.json', './fonts/8bitoperator-jve.woff', './fonts/8bitoperator-plus.woff', './fonts/8bitoperator-plus-bold.woff', './runtime/butterscotch.mjs', './runtime/audio-buffer.mjs', './runtime/butterscotch.wasm'];
