@@ -15,25 +15,31 @@
     <section id="launcher">
       <h1 class="sr-only">Undertale в браузере</h1>
       <div class="loader-logos" role="img" aria-label="Undertale × WebAssembly">
-        <svg class="loader-icon" viewBox="0 0 24 24" aria-hidden="true" shape-rendering="crispEdges"><path fill="#f32c43" d="M3 4h6v2h2v2h2V6h2V4h6v2h2v7h-2v3h-3v3h-3v3H9v-3H6v-3H3v-3H1V6h2z"/><path fill="#b71f32" d="M3 11v3h3v3h3v3h6v-2h3v-3h3v-4h2v2h-2v3h-3v3h-3v3H9v-3H6v-3H3v-3H1v-2z"/></svg>
+        <svg class="loader-icon soul" viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path fill="#ff0000" d="M2 2h4v1h1v1h2V3h1V2h4v1h1v1h1v5h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1H9v1H7v-1H6v-1H5v-1H4v-1H3v-1H2v-1H1V9H0V4h1V3h1z"/></svg>
         <svg class="loader-cross" viewBox="0 0 6 6" aria-hidden="true" shape-rendering="crispEdges"><path fill="#938571" d="M0 0h1v1H0zM4 0h1v1H4zM1 1h1v1H1zM3 1h1v1H3zM2 2h1v1H2zM1 3h1v1H1zM3 3h1v1H3zM0 4h1v1H0zM4 4h1v1H4z"/></svg>
         <svg class="loader-icon" viewBox="0 0 24 24" aria-hidden="true" shape-rendering="crispEdges"><path fill="#654ff0" d="M2 2h8v3h1v1h2V5h1V2h8v20H2z"/><path fill="#4934bc" d="M2 20h18V2h2v20H2z"/><path fill="#a99aff" d="M2 2h8v1H3v17H2zM14 2h6v1h-6z"/><path fill="#e5dccb" d="M4 11h2v6h1v-4h2v4h1v-6h2v8h-3v-2H7v2H4zM15 11h4v2h1v6h-2v-3h-3v3h-2v-6h2z"/><path fill="#654ff0" d="M16 13h1v1h-1z"/></svg>
       </div>
       <div class="loader">
         <div class="progress-label"><span id="status" role="status">Подготовка раннера…</span><span id="percent">0%</span></div>
         <progress id="progress" max="100" value="0" aria-label="Загрузка игры"></progress>
+        <div class="resource-progress" aria-label="Загрузка компонентов">
+          <label><span>module</span><progress id="module-progress" max="1" value="0"></progress><output id="module-value">0 / 2.0 MB</output></label>
+          <label><span>memory image</span><progress id="memory-progress" max="1" value="0"></progress><output id="memory-value">0 / 0 MB</output></label>
+          <label><span>archives</span><progress id="archives-progress" max="1" value="0"></progress><output id="archives-value">0 / 0 MB</output></label>
+          <label><span>chunks</span><progress id="chunks-progress" max="1" value="0"></progress><output id="chunks-value">0 / 0</output></label>
+          <label><span>host boot</span><progress id="boot-progress" max="5" value="0"></progress><output id="boot-value">0 / 5</output></label>
+        </div>
         <p id="detail">Первый запуск скачивает игру; следующие используют браузерный кэш.</p>
+        <p id="device-info"></p>
       </div>
-      <button id="start" class="primary" disabled>START GAME</button>
       <button id="retry" hidden>ПОВТОРИТЬ</button>
-      <p class="hint">↑ ↓ ← → движение · Z подтвердить · X отменить · C меню</p>
       <details class="startup-console"><summary>Startup log</summary><pre id="startup-log" role="log"></pre></details>
       <a class="loader-credit" href="https://github.com/xreamm1/undertale-web">xreamm</a>
     </section>
     <section id="player" hidden aria-label="Игра">
       <div id="stage">
         <canvas id="canvas" width="640" height="480" tabindex="0" aria-label="Undertale"></canvas>
-        <div id="touch" aria-label="Скрытое сенсорное управление"></div>
+        <div id="touch" aria-label="Сенсорное управление"><div id="stick" aria-hidden="true"><i></i></div></div>
       </div>
       <button id="settings" aria-label="Настройки и управление" aria-expanded="false" aria-controls="controls">⚙</button>
       <div id="controls" hidden>
@@ -43,7 +49,7 @@
         <button data-key="90">Z</button><button data-key="88">X</button><button data-key="67">C</button>
         <button id="export">ЭКСПОРТ СЕЙВА</button><label class="file-button">ИМПОРТ СЕЙВА<input id="import" type="file" accept="application/json,.json" hidden></label>
       </nav>
-      <p id="play-status" role="status">Слева — невидимый стик. Справа — тап Z, удержание X. Для боя включи относительное управление.</p>
+      <p id="play-status" role="status">Слева — стик. Справа — тап Z, удержание X. Для боя включи относительное управление.</p>
       </div>
     </section>
   </main>

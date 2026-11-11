@@ -1,12 +1,12 @@
 # Undertale Web
 
-Browser launcher for Undertale's Steam data files, using the Butterscotch WebAssembly runner and WebGL2. Static hosting; no build step. Open the GitHub Pages URL, wait for the download and press START GAME.
+Browser launcher for Undertale's Steam data files, using the Butterscotch WebAssembly runner and WebGL2. Static hosting; no build step. Open the GitHub Pages URL: the game starts automatically once resources and saves are ready. Audio is unlocked on the first touch or key press; fullscreen is available in settings because browsers require a user gesture for it.
 
 ## Controls
 
-Arrows move; Z confirms, X cancels, C opens the menu. Hidden touch controls: left dynamic joystick; right tap confirms; right hold (300 ms) holds cancel. Moving cancels the pending hold. The gear button reveals settings, save management and the battle-mode switch. In battle mode, movement is relative and works over letterbox areas as well. This stock runner does not export battle/HP state; mode switching is manual, relative keyboard movement is approximate, and automatic damage vibration requires instrumenting the runner. No claim of pixel-perfect finger tracking or complete game compatibility is made.
+Arrows move; Z confirms, X cancels, C opens the menu. Touch controls: visible left dynamic joystick; right tap confirms; right hold (300 ms) holds cancel. Moving cancels the pending hold. The gear button reveals settings, save management and the battle-mode switch. In battle mode, the joystick disappears and movement is relative, including over letterbox areas. This stock runner does not export battle/HP state; mode switching is manual, relative keyboard movement is approximate, and automatic damage vibration requires instrumenting the runner. No claim of pixel-perfect finger tracking or complete game compatibility is made.
 
-The compact pixel-art launch screen follows the user's blender-real loader: centered icons, a 104-pixel progress bar, byte progress and an expandable startup log.
+The pixel-art launch screen has a flat red soul, overall progress and five component rows: streamed WASM module bytes, streamed data.win bytes (memory image), audio bytes (archives), completed files (chunks), and completed initialization stages (host boot). Counts and sizes reflect this build, rather than example numbers from a reference image.
 
 ## Storage
 

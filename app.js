@@ -1,5 +1,3 @@
-import createRunner from './runtime/butterscotch.mjs';
-
 const $ = id => document.getElementById(id);
 const CACHE = 'undertale-cache-v1';
 let runner, database, battle = false, started = false, ready = false;
@@ -11,6 +9,19 @@ function log(text) {
   output.textContent = (output.textContent + text + '\n').split('\n').slice(-80).join('\n');
 }
 const report = text => { $(started ? 'play-status' : 'status').textContent = text; log(text); };
+const resourceState = {module:{loaded:0,total:2141967},memory:{loaded:0,total:0},archives:{loaded:0,total:0},chunks:{loaded:0,total:0},boot:{loaded:0,total:5}};
+function progressRow(name, loaded, total = resourceState[name].total) {
+  resourceState[name] = {loaded,total};
+  $(name+'-progress').max = Math.max(1,total);
+  $(name+'-progress').value = loaded;
+  $(name+'-value').textContent = ['module','memory','archives'].includes(name)
+    ? `${(loaded/1048576).toFixed(1)} / ${(total/1048576).toFixed(1)} MB` : `${loaded} / ${total}`;
+  const resources = ['module','memory','archives'].map(key=>resourceState[key]);
+  const bytes = resources.reduce((sum,item)=>sum+item.loaded,0), allBytes = resources.reduce((sum,item)=>sum+item.total,0);
+  const complete = allBytes ? (bytes/allBytes)*.95 + (resourceState.boot.loaded/5)*.05 : 0;
+  const percent = Math.min(100,Math.floor(complete*100));
+  $('progress').value=percent;$('percent').textContent=percent+'%';
+}
 
 function openDatabase() {
   return new Promise((resolve,reject) => {
@@ -62,8 +73,8 @@ async function prepareWorker() {
     navigator.serviceWorker.addEventListener('controllerchange',() => {clearTimeout(timeout);resolve();},{once:true});
   });
 }
-async function download(file, onBytes) {
-  if (!/^game\/[\w.-]+$/.test(file.path) || !Number.isSafeInteger(file.size) || file.size < 1) throw Error('Неверный манифест ресурсов');
+async function download(file, onBytes, game = true) {
+  if (!(game ? /^game\/[\w.-]+$/ : /^runtime\/butterscotch\.wasm$/).test(file.path) || !Number.isSafeInteger(file.size) || file.size < 1) throw Error('Неверный манифест ресурсов');
   const url = new URL(file.path,location.href);
   const cache = await caches.open(CACHE);
   let response = await cache.match(url.href);
@@ -83,38 +94,61 @@ async function download(file, onBytes) {
   } finally { reader.releaseLock(); }
   if (offset !== file.size) throw Error('Ресурс загружен не полностью: ' + file.path);
   if (!cached) await cache.put(url.href,new Response(bytes,{headers:{'Content-Type':file.path.endsWith('.ogg')?'audio/ogg':'application/octet-stream'}}));
-  runner.FS.writeFile('/' + file.path,bytes);
+  if(game)runner.FS.writeFile('/' + file.path,bytes);
+  return bytes;
 }
 async function prepare() {
   $('retry').hidden = true;
   try {
-    await prepareWorker();
-    database ||= await openDatabase();
-    runner ||= await createRunner({canvas:$('canvas'),print:line => {log(line);console.info('[Runner]',line);},printErr:line => {log(line);console.warn('[Runner]',line);},onAbort:reason => report('Ошибка раннера: ' + reason)});
-    runner.FS.mkdirTree('/game');runner.FS.mkdirTree('/saves');
+    $('device-info').textContent=`Browser · ${navigator.hardwareConcurrency || '?'} logical cores · 3 parallel downloads · Cache First`;
     const manifestResponse = await fetch('./assets.json');
     if (!manifestResponse.ok) throw Error('Манифест ресурсов недоступен');
     const manifest = await manifestResponse.json();
     if (!Array.isArray(manifest.files) || !manifest.files.some(file => file.path === 'game/data.win')) throw Error('В манифесте нет data.win');
+    progressRow('memory',0,manifest.files.find(file=>file.path==='game/data.win').size);
+    progressRow('archives',0,manifest.files.filter(file=>file.path!=='game/data.win').reduce((sum,file)=>sum+file.size,0));
+    progressRow('chunks',0,manifest.files.length);
+    await prepareWorker();
+    progressRow('boot',1);
+    database ||= await openDatabase();
+    progressRow('boot',2);
+    report('Загрузка WebAssembly');
+    const wasmBytes = await download({path:'runtime/butterscotch.wasm',size:resourceState.module.total},amount=>progressRow('module',resourceState.module.loaded+amount),false);
+    const compiled = await WebAssembly.compile(wasmBytes);
+    const {default:createRunner} = await import('./runtime/butterscotch.mjs');
+    let rejectInstantiation;
+    const instantiationFailure = new Promise((_,reject)=>{rejectInstantiation=reject;});
+    runner ||= await Promise.race([createRunner({canvas:$('canvas'),
+      instantiateWasm(imports,receive){WebAssembly.instantiate(compiled,imports).then(instance=>receive(instance)).catch(rejectInstantiation);return {};},
+      print:line => {log(line);console.info('[Runner]',line);},printErr:line => {log(line);console.warn('[Runner]',line);},onAbort:reason => report('Ошибка раннера: ' + reason)}),instantiationFailure]);
+    progressRow('boot',3);
+    runner.FS.mkdirTree('/game');runner.FS.mkdirTree('/saves');
     const total = manifest.files.reduce((sum,file) => sum + file.size,0);
     let loaded = 0, cursor = 0;
-    const update = amount => {
+    const update = (file,amount) => {
       loaded += amount;
-      const percent = Math.min(100,Math.floor(loaded/total*100));
-      $('progress').value = percent;$('percent').textContent = percent + '%';
+      const group = file.path==='game/data.win'?'memory':'archives';
+      progressRow(group,resourceState[group].loaded+amount);
       $('status').textContent = 'Загрузка игровых ресурсов';
       $('detail').textContent = `${(loaded/1048576).toFixed(1)} / ${(total/1048576).toFixed(1)} МБ · ${manifest.files.length} файлов`;
     };
     await Promise.all(Array.from({length:3},async () => {
-      while(cursor < manifest.files.length) await download(manifest.files[cursor++],update);
+      while(cursor < manifest.files.length){
+        const file=manifest.files[cursor++];
+        await download(file,amount=>update(file,amount));
+        progressRow('chunks',resourceState.chunks.loaded+1);
+      }
     }));
+    progressRow('boot',4);
     const saves = await store('readonly',target => target.get('current'));
     if (saves) for(const [name,bytes] of Object.entries(validateSave({format:'undertale-web-save-v1',files:saves}))) runner.FS.writeFile('/saves/' + name,new Uint8Array(bytes));
     lastSaves = JSON.stringify(snapshot());
     runner.FS.chdir('/game');
-    ready = true;$('start').disabled = false;$('launcher').classList.add('ready');
-    report('Готово. Нажмите START GAME');
+    ready = true;progressRow('boot',5);
+    report('Запуск игры…');
     $('cache-state').textContent = 'ИГРА СОХРАНЕНА В КЭШ';
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    startGame();
   } catch(error) {
     report(error.message);$('retry').hidden = false;$('cache-state').textContent = 'ОШИБКА ЗАГРУЗКИ';console.error(error);
   }
@@ -134,11 +168,20 @@ function setKeys(source, values) {
   for(const code of previous) if(!next.has(code)) runner?._onKeyUp(code);
   for(const code of next) if(!previous.has(code)) runner?._onKeyDown(code);
 }
-function releaseAll() { for(const point of points.values())clearTimeout(point.holdTimer);for(const source of [...held.keys()]) setKeys(source,[]);points.clear();relativeX=relativeY=0; }
+function drawStick(point,dx=0,dy=0) {
+  const stick=$('stick');
+  stick.classList.toggle('active',!!point);
+  if(point){const rect=$('touch').getBoundingClientRect();stick.style.left=(point.startX-rect.left)+'px';stick.style.top=(point.startY-rect.top)+'px';stick.style.bottom='auto';}
+  else{stick.style.left='';stick.style.top='';stick.style.bottom='';}
+  const length=Math.hypot(dx,dy),scale=length>32?32/length:1;
+  stick.firstElementChild.style.transform=`translate(${dx*scale}px,${dy*scale}px)`;
+}
+function releaseAll() { for(const point of points.values())clearTimeout(point.holdTimer);for(const source of [...held.keys()]) setKeys(source,[]);points.clear();relativeX=relativeY=0;drawStick(null); }
 function tap(code) {setKeys('tap',[code]);setTimeout(() => setKeys('tap',[]),90);}
 function switchMode(value) {
   releaseAll();battle=value;$('mode').textContent='РЕЖИМ: '+(battle?'БОЙ':'МИР');$('mode').setAttribute('aria-pressed',String(battle));
-  report(battle?'Води пальцем в любой части экрана, в том числе по чёрным полям. Справа удержание — X.':'Слева — невидимый стик. Справа — тап Z, удержание X.');
+  document.body.classList.toggle('battle',battle);
+  report(battle?'Води пальцем в любой части экрана, в том числе по чёрным полям. Справа удержание — X.':'Слева — стик. Справа — тап Z, удержание X.');
 }
 // The stock runner exposes keyboard input, not soul position or HP. An instrumented build can report these events.
 window.UndertaleShell = {setBattle:switchMode,damage:() => navigator.vibrate?.(25)};
@@ -149,6 +192,7 @@ touch.addEventListener('pointerdown',event => {
   const rect=touch.getBoundingClientRect();
   const point={x:event.clientX,y:event.clientY,startX:event.clientX,startY:event.clientY,right:event.clientX > rect.left+rect.width/2,moved:false,holding:false};
   points.set(event.pointerId,point);
+  if(!battle&&!point.right)drawStick(point);
   if(point.right)point.holdTimer=setTimeout(()=>{if(!point.moved && points.has(event.pointerId)){point.holding=true;setKeys('hold-'+event.pointerId,[88]);}},300);
 });
 touch.addEventListener('pointermove',event => {
@@ -163,6 +207,7 @@ touch.addEventListener('pointermove',event => {
     const dx=event.clientX-point.startX,dy=event.clientY-point.startY,keys=[];
     if(Math.abs(dx)>12)keys.push(dx<0?37:39);if(Math.abs(dy)>12)keys.push(dy<0?38:40);
     setKeys('joystick-'+event.pointerId,keys);
+    drawStick(point,dx,dy);
   }
   point.x=event.clientX;point.y=event.clientY;
 });
@@ -172,6 +217,7 @@ function endPointer(event) {
   if(event.type==='pointerup'&&point.right&&!point.moved&&!point.holding)tap(90);
   points.delete(event.pointerId);setKeys('joystick-'+event.pointerId,[]);
   setKeys('hold-'+event.pointerId,[]);
+  if(!point.right)drawStick([...points.values()].find(p=>!p.right)||null);
   if(!points.size){relativeX=relativeY=0;setKeys('relative',[]);}
 }
 for(const event of ['pointerup','pointercancel','lostpointercapture'])touch.addEventListener(event,endPointer);
@@ -199,17 +245,25 @@ for(const button of document.querySelectorAll('[data-key]')) {
   button.addEventListener('pointerdown',event=>{if(!started)return;event.preventDefault();button.setPointerCapture(event.pointerId);setKeys('button-'+button.dataset.key,[Number(button.dataset.key)]);resumeAudio();});
   for(const type of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(type,()=>setKeys('button-'+button.dataset.key,[]));
 }
-$('start').addEventListener('click',() => {
+function startGame() {
   if(!ready||started)return;
   started=true;document.body.classList.add('playing');$('launcher').hidden=true;$('player').hidden=false;
-  fullscreen();navigator.storage?.persist?.().catch(console.warn);resumeAudio();
+  resumeAudio();
   const args=['--save-folder','/saves','/game/data.win'];
   const pointers=args.map(value=>runner.stringToNewUTF8(value));
   const argv=runner._malloc(pointers.length*4);pointers.forEach((pointer,index)=>runner.setValue(argv+index*4,pointer,'i32'));
   runner.ccall('startRunner','number',['number','number'],[pointers.length,argv],{async:true}).then(()=>report('Игра завершена. Обновите страницу для нового запуска.')).catch(error=>report('Ошибка запуска: '+error.message)).finally(()=>{pointers.forEach(pointer=>runner._free(pointer));runner._free(argv);});
   saveTimer=setInterval(()=>syncSaves().catch(error=>report('Не удалось сохранить: '+error.message)),1000);
   $('canvas').focus();
-});
+}
+let persistentRequested=false;
+function unlockOnGesture(){
+  if(!started)return;
+  resumeAudio();
+  if(!persistentRequested){persistentRequested=true;navigator.storage?.persist?.().catch(console.warn);}
+}
+window.addEventListener('pointerdown',unlockOnGesture,{capture:true,passive:true});
+window.addEventListener('keydown',unlockOnGesture,{capture:true});
 $('mode').onclick=()=>switchMode(!battle);
 $('settings').onclick=()=>{
   releaseAll();$('controls').hidden=!$('controls').hidden;
