@@ -157,9 +157,28 @@ function resumeAudio() {
   const devices = window.miniaudio?.devices || [];
   for (const device of Object.values(devices)) device?.webaudio?.resume?.().catch(console.warn);
 }
-function fullscreen() {
-  const request = document.body.requestFullscreen?.();
-  request?.catch(() => report('Браузер не разрешил полноэкранный режим. Игра продолжает работать.'));
+async function fullscreen() {
+  resumeAudio();
+  if(document.fullscreenElement){
+    try{await document.exitFullscreen();}catch{report('Не удалось выйти из полноэкранного режима.');}
+    return;
+  }
+  try{
+    if(!document.body.requestFullscreen)throw Error('Fullscreen unavailable');
+    await document.body.requestFullscreen();
+    $('controls').hidden=true;$('settings').setAttribute('aria-expanded','false');
+  }catch{
+    report('Полноэкранный режим недоступен. Поверните телефон горизонтально.');
+    $('orientation-hint').hidden=!matchMedia('(orientation: portrait)').matches;
+    return;
+  }
+  try{
+    if(!screen.orientation?.lock)throw Error('Orientation lock unavailable');
+    await screen.orientation.lock('landscape');
+    $('orientation-hint').hidden=true;
+  }catch{
+    $('orientation-hint').hidden=!matchMedia('(orientation: portrait)').matches;
+  }
 }
 function setKeys(source, values) {
   const previous = new Set([...held.values()].flat());
@@ -272,6 +291,19 @@ $('settings').onclick=()=>{
 };
 $('sound').onclick=()=>{resumeAudio();report('Звук включён, если разрешён браузером.');};
 $('fullscreen').onclick=fullscreen;
+document.addEventListener('fullscreenchange',()=>{
+  const active=!!document.fullscreenElement;
+  $('fullscreen').textContent=active?'ВЫЙТИ ИЗ ПОЛНОГО ЭКРАНА':'НА ВЕСЬ ЭКРАН';
+  if(!active){
+    try{screen.orientation?.unlock?.();}catch{}
+    $('orientation-hint').hidden=true;
+  }
+  releaseAll();
+});
+matchMedia('(orientation: landscape)').addEventListener('change',event=>{
+  if(event.matches)$('orientation-hint').hidden=true;
+  releaseAll();
+});
 $('retry').onclick=()=>location.reload();
 $('export').onclick=async()=>{
   try{

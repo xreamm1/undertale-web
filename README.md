@@ -2,6 +2,8 @@
 
 Browser launcher for Undertale's Steam data files, using the Butterscotch WebAssembly runner and WebGL2. Static hosting; no build step. Open the GitHub Pages URL: the game starts automatically once resources and saves are ready. Audio is unlocked on the first touch or key press; fullscreen is available in settings because browsers require a user gesture for it.
 
+Fullscreen requests landscape orientation after entering fullscreen. When orientation lock is unavailable or rejected, portrait screens show a manual rotation hint. Leaving fullscreen releases orientation lock. Support depends on the mobile browser.
+
 ## Controls
 
 Arrows move; Z confirms, X cancels, C opens the menu. Touch controls: visible left dynamic joystick; right tap confirms; right hold (300 ms) holds cancel. Moving cancels the pending hold. The gear button reveals settings, save management and the battle-mode switch. In battle mode, the joystick disappears and movement is relative, including over letterbox areas. This stock runner does not export battle/HP state; mode switching is manual, relative keyboard movement is approximate, and automatic damage vibration requires instrumenting the runner. No claim of pixel-perfect finger tracking or complete game compatibility is made.
