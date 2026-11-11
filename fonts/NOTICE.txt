@@ -5,7 +5,7 @@ https://creativecommons.org/licenses/by-nc-sa/3.0/
 Source: https://github.com/TheVessels/GonerEngine/blob/gaster/fonts/8bitoperator_jve.ttf
 Converted from TTF to WOFF without changing glyph outlines.
 
-8bitOperatorPlus Regular (Cyrillic and additional glyph fallback)
+8bitOperatorPlus Regular (Cyrillic fallback) and Bold (white bold loader text)
 Source distribution: https://www.dafont.com/8bitoperator-jve.font
 License: SIL Open Font License, bundled in OFL.txt.
 Converted from TTF to WOFF without changing glyph outlines.
