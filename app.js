@@ -242,7 +242,7 @@ function drawStick(point,dx=0,dy=0) {
   stick.classList.toggle('active',!!point);
   if(point){const rect=$('touch').getBoundingClientRect();stick.style.left=(point.startX-rect.left)+'px';stick.style.top=(point.startY-rect.top)+'px';stick.style.bottom='auto';}
   else{stick.style.left='';stick.style.top='';stick.style.bottom='';}
-  const length=Math.hypot(dx,dy),scale=length>32?32/length:1;
+  const length=Math.hypot(dx,dy),scale=length>24?24/length:1;
   stick.firstElementChild.style.transform=`translate(${dx*scale}px,${dy*scale}px)`;
 }
 function releaseAll() { for(const point of points.values())clearTimeout(point.holdTimer);for(const source of [...held.keys()]) setKeys(source,[]);points.clear();relativeX=relativeY=0;drawStick(null);document.querySelectorAll('[data-key].pressed').forEach(button=>button.classList.remove('pressed')); }
