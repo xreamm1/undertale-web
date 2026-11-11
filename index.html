@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#080808">
+  <meta name="description" content="Undertale в браузере — WebGL2, офлайн-кэш и сенсорное управление.">
+  <title>UNDERTALE · Web</title>
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <header><a href="./" class="brand"><span class="heart">♥</span> UNDERTALE <small>WEB</small></a><span id="cache-state">ПРОВЕРКА КЭША</span></header>
+  <main>
+    <section id="launcher">
+      <p class="eyebrow">STAY DETERMINED.</p>
+      <h1>Твоя история.<br>Твоя решимость.</h1>
+      <p class="intro">Оригинальная игра. Прямо в браузере.<br>Клавиатура или касание — путь выбираешь ты.</p>
+      <div class="save-point" aria-hidden="true">✦</div>
+      <div class="loader">
+        <div class="progress-label"><span id="status" role="status">Подготовка раннера…</span><span id="percent">0%</span></div>
+        <progress id="progress" max="100" value="0" aria-label="Загрузка игры"></progress>
+        <p id="detail">Первый запуск скачивает игру; следующие используют браузерный кэш.</p>
+      </div>
+      <button id="start" class="primary" disabled>START GAME</button>
+      <button id="retry" hidden>ПОВТОРИТЬ</button>
+      <p class="hint">↑ ↓ ← → движение · Z подтвердить · X отменить · C меню</p>
+    </section>
+    <section id="player" hidden aria-label="Игра">
+      <div id="stage">
+        <canvas id="canvas" width="640" height="480" tabindex="0" aria-label="Undertale"></canvas>
+        <div id="touch" aria-label="Сенсорное управление"><div id="stick" hidden><i></i></div></div>
+      </div>
+      <nav class="toolbar" aria-label="Настройки игры">
+        <button id="sound">ЗВУК</button><button id="fullscreen">НА ВЕСЬ ЭКРАН</button>
+        <button id="mode" aria-pressed="false">РЕЖИМ: МИР</button>
+        <button data-key="90">Z</button><button data-key="88">X</button><button data-key="67">C</button>
+        <button id="export">ЭКСПОРТ СЕЙВА</button><label class="file-button">ИМПОРТ СЕЙВА<input id="import" type="file" accept="application/json,.json" hidden></label>
+      </nav>
+      <p id="play-status" role="status">Слева — джойстик. Справа — Z; два пальца — X. Для боя включи относительное управление.</p>
+    </section>
+  </main>
+  <footer><span>640 × 480 · WEBGL2 · OFFLINE CACHE</span><span>Undertale © Toby Fox · Runner: <a href="https://github.com/ButterscotchRunner/Butterscotch">Butterscotch</a> · <a href="./runtime/LICENSE">AGPL-3.0</a></span></footer>
+</body>
+</html>

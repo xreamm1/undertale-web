@@ -1,0 +1,857 @@
+{
+  "files": [
+    {
+      "size": 41445,
+      "path": "game/abc_123_a.ogg"
+    },
+    {
+      "size": 62921978,
+      "path": "game/data.win"
+    },
+    {
+      "size": 190508,
+      "path": "game/mus_a2.ogg"
+    },
+    {
+      "size": 37336,
+      "path": "game/mus_alphysfix.ogg"
+    },
+    {
+      "size": 925215,
+      "path": "game/mus_amalgam.ogg"
+    },
+    {
+      "size": 25226,
+      "path": "game/mus_ambientwater.ogg"
+    },
+    {
+      "size": 1631371,
+      "path": "game/mus_anothermedium.ogg"
+    },
+    {
+      "size": 15367,
+      "path": "game/mus_bad.ogg"
+    },
+    {
+      "size": 294861,
+      "path": "game/mus_barrier.ogg"
+    },
+    {
+      "size": 658044,
+      "path": "game/mus_battle1.ogg"
+    },
+    {
+      "size": 723437,
+      "path": "game/mus_battle2.ogg"
+    },
+    {
+      "size": 138547,
+      "path": "game/mus_bergentruckung.ogg"
+    },
+    {
+      "size": 55087,
+      "path": "game/mus_bgflameA.ogg"
+    },
+    {
+      "size": 339872,
+      "path": "game/mus_birdnoise.ogg"
+    },
+    {
+      "size": 257060,
+      "path": "game/mus_birdsong.ogg"
+    },
+    {
+      "size": 1268539,
+      "path": "game/mus_boss1.ogg"
+    },
+    {
+      "size": 421829,
+      "path": "game/mus_cast_1.ogg"
+    },
+    {
+      "size": 218377,
+      "path": "game/mus_cast_2.ogg"
+    },
+    {
+      "size": 419039,
+      "path": "game/mus_cast_3.ogg"
+    },
+    {
+      "size": 543714,
+      "path": "game/mus_cast_4.ogg"
+    },
+    {
+      "size": 835097,
+      "path": "game/mus_cast_5.ogg"
+    },
+    {
+      "size": 213067,
+      "path": "game/mus_cast_6.ogg"
+    },
+    {
+      "size": 188078,
+      "path": "game/mus_cast_7.ogg"
+    },
+    {
+      "size": 1663093,
+      "path": "game/mus_chokedup.ogg"
+    },
+    {
+      "size": 78897,
+      "path": "game/mus_churchbell.ogg"
+    },
+    {
+      "size": 18155,
+      "path": "game/mus_computer.ogg"
+    },
+    {
+      "size": 215747,
+      "path": "game/mus_confession.ogg"
+    },
+    {
+      "size": 24348,
+      "path": "game/mus_coolbeat.ogg"
+    },
+    {
+      "size": 62347,
+      "path": "game/mus_core_ambience.ogg"
+    },
+    {
+      "size": 2019126,
+      "path": "game/mus_core.ogg"
+    },
+    {
+      "size": 122526,
+      "path": "game/mus_coretransition.ogg"
+    },
+    {
+      "size": 142854,
+      "path": "game/mus_creepy_ambience.ogg"
+    },
+    {
+      "size": 522004,
+      "path": "game/mus_crickets.ogg"
+    },
+    {
+      "size": 54298,
+      "path": "game/mus_cymbal.ogg"
+    },
+    {
+      "size": 115895,
+      "path": "game/mus_dance_of_dog.ogg"
+    },
+    {
+      "size": 389822,
+      "path": "game/mus_date_fight.ogg"
+    },
+    {
+      "size": 294740,
+      "path": "game/mus_date_tense.ogg"
+    },
+    {
+      "size": 1315019,
+      "path": "game/mus_date.ogg"
+    },
+    {
+      "size": 72441,
+      "path": "game/mus_deeploop2.ogg"
+    },
+    {
+      "size": 84660,
+      "path": "game/mus_disturbing.ogg"
+    },
+    {
+      "size": 25150,
+      "path": "game/mus_dogappear.ogg"
+    },
+    {
+      "size": 88021,
+      "path": "game/mus_dogmeander.ogg"
+    },
+    {
+      "size": 353905,
+      "path": "game/mus_dogroom.ogg"
+    },
+    {
+      "size": 569729,
+      "path": "game/mus_dogshrine_1.ogg"
+    },
+    {
+      "size": 179728,
+      "path": "game/mus_dogshrine_2.ogg"
+    },
+    {
+      "size": 386793,
+      "path": "game/mus_dogsong.ogg"
+    },
+    {
+      "size": 1424917,
+      "path": "game/mus_dontgiveup.ogg"
+    },
+    {
+      "size": 13942,
+      "path": "game/mus_doorclose.ogg"
+    },
+    {
+      "size": 9233,
+      "path": "game/mus_dooropen.ogg"
+    },
+    {
+      "size": 20373,
+      "path": "game/mus_drone.ogg"
+    },
+    {
+      "size": 1637070,
+      "path": "game/mus_dummybattle.ogg"
+    },
+    {
+      "size": 16185,
+      "path": "game/mus_dununnn.ogg"
+    },
+    {
+      "size": 90308,
+      "path": "game/mus_elevator_last.ogg"
+    },
+    {
+      "size": 21671,
+      "path": "game/mus_elevator.ogg"
+    },
+    {
+      "size": 2188141,
+      "path": "game/mus_endarea_parta.ogg"
+    },
+    {
+      "size": 2134581,
+      "path": "game/mus_endarea_partb.ogg"
+    },
+    {
+      "size": 295592,
+      "path": "game/mus_endingexcerpt1.ogg"
+    },
+    {
+      "size": 594893,
+      "path": "game/mus_endingexcerpt2.ogg"
+    },
+    {
+      "size": 1724516,
+      "path": "game/mus_express_myself.ogg"
+    },
+    {
+      "size": 166063,
+      "path": "game/mus_f_6s_1.ogg"
+    },
+    {
+      "size": 300803,
+      "path": "game/mus_f_6s_2.ogg"
+    },
+    {
+      "size": 172921,
+      "path": "game/mus_f_6s_3.ogg"
+    },
+    {
+      "size": 289982,
+      "path": "game/mus_f_6s_4.ogg"
+    },
+    {
+      "size": 346516,
+      "path": "game/mus_f_6s_5.ogg"
+    },
+    {
+      "size": 151223,
+      "path": "game/mus_f_6s_6.ogg"
+    },
+    {
+      "size": 20542,
+      "path": "game/mus_f_alarm.ogg"
+    },
+    {
+      "size": 64749,
+      "path": "game/mus_f_destroyed.ogg"
+    },
+    {
+      "size": 76088,
+      "path": "game/mus_f_destroyed2.ogg"
+    },
+    {
+      "size": 36313,
+      "path": "game/mus_f_destroyed3.ogg"
+    },
+    {
+      "size": 231568,
+      "path": "game/mus_f_finale_1_l.ogg"
+    },
+    {
+      "size": 129927,
+      "path": "game/mus_f_finale_1.ogg"
+    },
+    {
+      "size": 503821,
+      "path": "game/mus_f_finale_2.ogg"
+    },
+    {
+      "size": 719807,
+      "path": "game/mus_f_finale_3.ogg"
+    },
+    {
+      "size": 202626,
+      "path": "game/mus_f_intro.ogg"
+    },
+    {
+      "size": 73118,
+      "path": "game/mus_f_newlaugh_low.ogg"
+    },
+    {
+      "size": 37700,
+      "path": "game/mus_f_newlaugh.ogg"
+    },
+    {
+      "size": 359060,
+      "path": "game/mus_f_part1.ogg"
+    },
+    {
+      "size": 328637,
+      "path": "game/mus_f_part2.ogg"
+    },
+    {
+      "size": 315539,
+      "path": "game/mus_f_part3.ogg"
+    },
+    {
+      "size": 58182,
+      "path": "game/mus_f_saved.ogg"
+    },
+    {
+      "size": 295335,
+      "path": "game/mus_f_wind1.ogg"
+    },
+    {
+      "size": 224153,
+      "path": "game/mus_f_wind2.ogg"
+    },
+    {
+      "size": 1520179,
+      "path": "game/mus_fallendown2.ogg"
+    },
+    {
+      "size": 13207,
+      "path": "game/mus_fearsting.ogg"
+    },
+    {
+      "size": 188451,
+      "path": "game/mus_flowey.ogg"
+    },
+    {
+      "size": 367721,
+      "path": "game/mus_gameover.ogg"
+    },
+    {
+      "size": 563673,
+      "path": "game/mus_ghostbattle.ogg"
+    },
+    {
+      "size": 33633,
+      "path": "game/mus_harpnoise.ogg"
+    },
+    {
+      "size": 1607956,
+      "path": "game/mus_hereweare.ogg"
+    },
+    {
+      "size": 766125,
+      "path": "game/mus_hotel_battle.ogg"
+    },
+    {
+      "size": 968920,
+      "path": "game/mus_hotel.ogg"
+    },
+    {
+      "size": 1188342,
+      "path": "game/mus_house1.ogg"
+    },
+    {
+      "size": 1311196,
+      "path": "game/mus_house2.ogg"
+    },
+    {
+      "size": 39671,
+      "path": "game/mus_intronoise.ogg"
+    },
+    {
+      "size": 697389,
+      "path": "game/mus_kingdescription.ogg"
+    },
+    {
+      "size": 955109,
+      "path": "game/mus_lab.ogg"
+    },
+    {
+      "size": 907150,
+      "path": "game/mus_leave.ogg"
+    },
+    {
+      "size": 204293,
+      "path": "game/mus_menu0.ogg"
+    },
+    {
+      "size": 227547,
+      "path": "game/mus_menu1.ogg"
+    },
+    {
+      "size": 360118,
+      "path": "game/mus_menu2.ogg"
+    },
+    {
+      "size": 374733,
+      "path": "game/mus_menu3.ogg"
+    },
+    {
+      "size": 388076,
+      "path": "game/mus_menu4.ogg"
+    },
+    {
+      "size": 376086,
+      "path": "game/mus_menu5.ogg"
+    },
+    {
+      "size": 383516,
+      "path": "game/mus_menu6.ogg"
+    },
+    {
+      "size": 69155,
+      "path": "game/mus_mett_applause.ogg"
+    },
+    {
+      "size": 55195,
+      "path": "game/mus_mett_cheer.ogg"
+    },
+    {
+      "size": 79860,
+      "path": "game/mus_mettafly.ogg"
+    },
+    {
+      "size": 1634836,
+      "path": "game/mus_mettaton_ex.ogg"
+    },
+    {
+      "size": 319346,
+      "path": "game/mus_mettaton_neo.ogg"
+    },
+    {
+      "size": 180281,
+      "path": "game/mus_mettaton_pretransform.ogg"
+    },
+    {
+      "size": 583328,
+      "path": "game/mus_mettatonbattle.ogg"
+    },
+    {
+      "size": 163603,
+      "path": "game/mus_mettmusical1.ogg"
+    },
+    {
+      "size": 160930,
+      "path": "game/mus_mettmusical2.ogg"
+    },
+    {
+      "size": 149776,
+      "path": "game/mus_mettmusical3.ogg"
+    },
+    {
+      "size": 156332,
+      "path": "game/mus_mettmusical4.ogg"
+    },
+    {
+      "size": 1005973,
+      "path": "game/mus_mettsad.ogg"
+    },
+    {
+      "size": 28974,
+      "path": "game/mus_mode.ogg"
+    },
+    {
+      "size": 563936,
+      "path": "game/mus_mtgameshow.ogg"
+    },
+    {
+      "size": 277334,
+      "path": "game/mus_muscle.ogg"
+    },
+    {
+      "size": 752037,
+      "path": "game/mus_musicbox.ogg"
+    },
+    {
+      "size": 7881,
+      "path": "game/mus_myemeow.ogg"
+    },
+    {
+      "size": 164686,
+      "path": "game/mus_mysteriousroom2.ogg"
+    },
+    {
+      "size": 201444,
+      "path": "game/mus_mystery.ogg"
+    },
+    {
+      "size": 481190,
+      "path": "game/mus_napstachords.ogg"
+    },
+    {
+      "size": 103046,
+      "path": "game/mus_napstahouse.ogg"
+    },
+    {
+      "size": 574242,
+      "path": "game/mus_news_battle.ogg"
+    },
+    {
+      "size": 174060,
+      "path": "game/mus_news.ogg"
+    },
+    {
+      "size": 55969,
+      "path": "game/mus_ohyes.ogg"
+    },
+    {
+      "size": 140074,
+      "path": "game/mus_oogloop.ogg"
+    },
+    {
+      "size": 369368,
+      "path": "game/mus_operatile.ogg"
+    },
+    {
+      "size": 582100,
+      "path": "game/mus_options_fall.ogg"
+    },
+    {
+      "size": 304325,
+      "path": "game/mus_options_summer.ogg"
+    },
+    {
+      "size": 166565,
+      "path": "game/mus_options_winter.ogg"
+    },
+    {
+      "size": 271164,
+      "path": "game/mus_papyrus.ogg"
+    },
+    {
+      "size": 637752,
+      "path": "game/mus_papyrusboss.ogg"
+    },
+    {
+      "size": 233861,
+      "path": "game/mus_piano.ogg"
+    },
+    {
+      "size": 131921,
+      "path": "game/mus_prebattle1.ogg"
+    },
+    {
+      "size": 63364,
+      "path": "game/mus_predummy.ogg"
+    },
+    {
+      "size": 497216,
+      "path": "game/mus_race.ogg"
+    },
+    {
+      "size": 95924,
+      "path": "game/mus_rain_deep.ogg"
+    },
+    {
+      "size": 98059,
+      "path": "game/mus_rain.ogg"
+    },
+    {
+      "size": 66334,
+      "path": "game/mus_repeat_1.ogg"
+    },
+    {
+      "size": 67502,
+      "path": "game/mus_repeat_2.ogg"
+    },
+    {
+      "size": 3032892,
+      "path": "game/mus_reunited.ogg"
+    },
+    {
+      "size": 20847,
+      "path": "game/mus_rimshot.ogg"
+    },
+    {
+      "size": 1043131,
+      "path": "game/mus_ruins.ogg"
+    },
+    {
+      "size": 654602,
+      "path": "game/mus_ruinspiano.ogg"
+    },
+    {
+      "size": 2155251,
+      "path": "game/mus_sansdate.ogg"
+    },
+    {
+      "size": 11623,
+      "path": "game/mus_sfx_a_grab.ogg"
+    },
+    {
+      "size": 36071,
+      "path": "game/mus_sfx_chainsaw.ogg"
+    },
+    {
+      "size": 145003,
+      "path": "game/mus_sfx_hypergoner_charge.ogg"
+    },
+    {
+      "size": 35374,
+      "path": "game/mus_sfx_hypergoner_laugh.ogg"
+    },
+    {
+      "size": 24775,
+      "path": "game/mus_sfx_rainbowbeam_hold.ogg"
+    },
+    {
+      "size": 505692,
+      "path": "game/mus_shop.ogg"
+    },
+    {
+      "size": 228860,
+      "path": "game/mus_sigh_of_dog.ogg"
+    },
+    {
+      "size": 4037,
+      "path": "game/mus_silence.ogg"
+    },
+    {
+      "size": 77774,
+      "path": "game/mus_smallshock.ogg"
+    },
+    {
+      "size": 734622,
+      "path": "game/mus_smile.ogg"
+    },
+    {
+      "size": 336887,
+      "path": "game/mus_snoresymphony.ogg"
+    },
+    {
+      "size": 148063,
+      "path": "game/mus_snowwalk.ogg"
+    },
+    {
+      "size": 1016656,
+      "path": "game/mus_snowy.ogg"
+    },
+    {
+      "size": 1076361,
+      "path": "game/mus_spider.ogg"
+    },
+    {
+      "size": 109375,
+      "path": "game/mus_spoopy_holiday.ogg"
+    },
+    {
+      "size": 263510,
+      "path": "game/mus_spoopy_wave.ogg"
+    },
+    {
+      "size": 187771,
+      "path": "game/mus_spoopy.ogg"
+    },
+    {
+      "size": 14348,
+      "path": "game/mus_st_happytown.ogg"
+    },
+    {
+      "size": 164073,
+      "path": "game/mus_st_him.ogg"
+    },
+    {
+      "size": 29761,
+      "path": "game/mus_st_meatfactory.ogg"
+    },
+    {
+      "size": 13248,
+      "path": "game/mus_st_troubledingle.ogg"
+    },
+    {
+      "size": 425637,
+      "path": "game/mus_star.ogg"
+    },
+    {
+      "size": 24291,
+      "path": "game/mus_sticksnap.ogg"
+    },
+    {
+      "size": 5057,
+      "path": "game/mus_story_stuck.ogg"
+    },
+    {
+      "size": 664113,
+      "path": "game/mus_story.ogg"
+    },
+    {
+      "size": 333418,
+      "path": "game/mus_temshop.ogg"
+    },
+    {
+      "size": 666763,
+      "path": "game/mus_temvillage.ogg"
+    },
+    {
+      "size": 79758,
+      "path": "game/mus_tension.ogg"
+    },
+    {
+      "size": 21403,
+      "path": "game/mus_tone2.ogg"
+    },
+    {
+      "size": 13723,
+      "path": "game/mus_tone3.ogg"
+    },
+    {
+      "size": 468735,
+      "path": "game/mus_toomuch.ogg"
+    },
+    {
+      "size": 378887,
+      "path": "game/mus_toriel.ogg"
+    },
+    {
+      "size": 879498,
+      "path": "game/mus_town.ogg"
+    },
+    {
+      "size": 104730,
+      "path": "game/mus_tv.ogg"
+    },
+    {
+      "size": 1327244,
+      "path": "game/mus_undyneboss.ogg"
+    },
+    {
+      "size": 228138,
+      "path": "game/mus_undynefast.ogg"
+    },
+    {
+      "size": 62937,
+      "path": "game/mus_undynepiano.ogg"
+    },
+    {
+      "size": 150736,
+      "path": "game/mus_undynescary.ogg"
+    },
+    {
+      "size": 432991,
+      "path": "game/mus_undynetheme.ogg"
+    },
+    {
+      "size": 957792,
+      "path": "game/mus_undynetruetheme.ogg"
+    },
+    {
+      "size": 1757194,
+      "path": "game/mus_vsasgore.ogg"
+    },
+    {
+      "size": 1479629,
+      "path": "game/mus_waterfall.ogg"
+    },
+    {
+      "size": 242873,
+      "path": "game/mus_waterquiet.ogg"
+    },
+    {
+      "size": 37985,
+      "path": "game/mus_wawa.ogg"
+    },
+    {
+      "size": 56851,
+      "path": "game/mus_whoopee.ogg"
+    },
+    {
+      "size": 90923,
+      "path": "game/mus_wind.ogg"
+    },
+    {
+      "size": 76883,
+      "path": "game/mus_woofenstein_loop.ogg"
+    },
+    {
+      "size": 94782,
+      "path": "game/mus_woofenstein.ogg"
+    },
+    {
+      "size": 70778,
+      "path": "game/mus_wrongnumbersong.ogg"
+    },
+    {
+      "size": 637481,
+      "path": "game/mus_wrongworld.ogg"
+    },
+    {
+      "size": 173968,
+      "path": "game/mus_x_undyne_pre.ogg"
+    },
+    {
+      "size": 1839786,
+      "path": "game/mus_x_undyne.ogg"
+    },
+    {
+      "size": 1253912,
+      "path": "game/mus_xpart_2.ogg"
+    },
+    {
+      "size": 708242,
+      "path": "game/mus_xpart_a.ogg"
+    },
+    {
+      "size": 508539,
+      "path": "game/mus_xpart_b.ogg"
+    },
+    {
+      "size": 198691,
+      "path": "game/mus_xpart_back.ogg"
+    },
+    {
+      "size": 2070525,
+      "path": "game/mus_xpart.ogg"
+    },
+    {
+      "size": 395020,
+      "path": "game/mus_yourbestfriend_3.ogg"
+    },
+    {
+      "size": 2115643,
+      "path": "game/mus_z_ending.ogg"
+    },
+    {
+      "size": 1867146,
+      "path": "game/mus_zz_megalovania.ogg"
+    },
+    {
+      "size": 94797,
+      "path": "game/mus_zzz_c.ogg"
+    },
+    {
+      "size": 57136,
+      "path": "game/mus_zzz_c2.ogg"
+    },
+    {
+      "size": 36248,
+      "path": "game/snd_ballchime.ogg"
+    },
+    {
+      "size": 5853,
+      "path": "game/snd_curtgunshot.ogg"
+    },
+    {
+      "size": 14007,
+      "path": "game/snd_mushroomdance.ogg"
+    }
+  ],
+  "version": 1
+}
