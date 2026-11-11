@@ -4,7 +4,9 @@ Browser launcher for Undertale's Steam data files, using the Butterscotch WebAss
 
 ## Controls
 
-Arrows move; Z confirms, X cancels, C opens the menu. Touch: left dynamic joystick; right tap confirms; two right fingers hold cancel. The battle button enables relative touch movement. This stock runner does not export battle/HP state; mode switching is manual, relative keyboard movement is approximate, and automatic damage vibration requires instrumenting the runner. No claim of pixel-perfect finger tracking or complete game compatibility is made.
+Arrows move; Z confirms, X cancels, C opens the menu. Hidden touch controls: left dynamic joystick; right tap confirms; right hold (300 ms) holds cancel. Moving cancels the pending hold. The gear button reveals settings, save management and the battle-mode switch. In battle mode, movement is relative and works over letterbox areas as well. This stock runner does not export battle/HP state; mode switching is manual, relative keyboard movement is approximate, and automatic damage vibration requires instrumenting the runner. No claim of pixel-perfect finger tracking or complete game compatibility is made.
+
+The compact pixel-art launch screen follows the user's blender-real loader: centered icons, a 104-pixel progress bar, byte progress and an expandable startup log.
 
 ## Storage
 

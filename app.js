@@ -6,7 +6,11 @@ let runner, database, battle = false, started = false, ready = false;
 let lastSaves = '', saveTimer, relativeX = 0, relativeY = 0;
 const held = new Map(), points = new Map();
 const saveNames = /^(file\d+|undertale\.ini|system_information_\d+|config\.ini)$/i;
-const report = text => { $(started ? 'play-status' : 'status').textContent = text; };
+function log(text) {
+  const output = $('startup-log');
+  output.textContent = (output.textContent + text + '\n').split('\n').slice(-80).join('\n');
+}
+const report = text => { $(started ? 'play-status' : 'status').textContent = text; log(text); };
 
 function openDatabase() {
   return new Promise((resolve,reject) => {
@@ -86,7 +90,7 @@ async function prepare() {
   try {
     await prepareWorker();
     database ||= await openDatabase();
-    runner ||= await createRunner({canvas:$('canvas'),print:line => console.info('[Runner]',line),printErr:line => console.warn('[Runner]',line),onAbort:reason => report('Ошибка раннера: ' + reason)});
+    runner ||= await createRunner({canvas:$('canvas'),print:line => {log(line);console.info('[Runner]',line);},printErr:line => {log(line);console.warn('[Runner]',line);},onAbort:reason => report('Ошибка раннера: ' + reason)});
     runner.FS.mkdirTree('/game');runner.FS.mkdirTree('/saves');
     const manifestResponse = await fetch('./assets.json');
     if (!manifestResponse.ok) throw Error('Манифест ресурсов недоступен');
@@ -108,7 +112,7 @@ async function prepare() {
     if (saves) for(const [name,bytes] of Object.entries(validateSave({format:'undertale-web-save-v1',files:saves}))) runner.FS.writeFile('/saves/' + name,new Uint8Array(bytes));
     lastSaves = JSON.stringify(snapshot());
     runner.FS.chdir('/game');
-    ready = true;$('start').disabled = false;
+    ready = true;$('start').disabled = false;$('launcher').classList.add('ready');
     report('Готово. Нажмите START GAME');
     $('cache-state').textContent = 'ИГРА СОХРАНЕНА В КЭШ';
   } catch(error) {
@@ -130,11 +134,11 @@ function setKeys(source, values) {
   for(const code of previous) if(!next.has(code)) runner?._onKeyUp(code);
   for(const code of next) if(!previous.has(code)) runner?._onKeyDown(code);
 }
-function releaseAll() { for(const source of [...held.keys()]) setKeys(source,[]);points.clear();relativeX=relativeY=0;$('stick').hidden=true; }
+function releaseAll() { for(const point of points.values())clearTimeout(point.holdTimer);for(const source of [...held.keys()]) setKeys(source,[]);points.clear();relativeX=relativeY=0; }
 function tap(code) {setKeys('tap',[code]);setTimeout(() => setKeys('tap',[]),90);}
 function switchMode(value) {
   releaseAll();battle=value;$('mode').textContent='РЕЖИМ: '+(battle?'БОЙ':'МИР');$('mode').setAttribute('aria-pressed',String(battle));
-  report(battle?'Води пальцем в любой части экрана. Z / X / C — кнопки внизу.':'Слева — джойстик. Справа — Z; два пальца — X.');
+  report(battle?'Води пальцем в любой части экрана, в том числе по чёрным полям. Справа удержание — X.':'Слева — невидимый стик. Справа — тап Z, удержание X.');
 }
 // The stock runner exposes keyboard input, not soul position or HP. An instrumented build can report these events.
 window.UndertaleShell = {setBattle:switchMode,damage:() => navigator.vibrate?.(25)};
@@ -143,33 +147,31 @@ touch.addEventListener('pointerdown',event => {
   if(!started || event.pointerType === 'mouse') return;
   event.preventDefault();touch.setPointerCapture(event.pointerId);resumeAudio();
   const rect=touch.getBoundingClientRect();
-  const point={x:event.clientX,y:event.clientY,startX:event.clientX,startY:event.clientY,right:event.clientX > rect.left+rect.width/2,moved:false,multi:false};
+  const point={x:event.clientX,y:event.clientY,startX:event.clientX,startY:event.clientY,right:event.clientX > rect.left+rect.width/2,moved:false,holding:false};
   points.set(event.pointerId,point);
-  const rights=[...points.values()].filter(p => p.right);
-  if(!battle && rights.length>=2){rights.forEach(p=>p.multi=true);setKeys('cancel',[88]);}
-  if(!battle && !point.right && ![...points.entries()].some(([id,p])=>id!==event.pointerId&&!p.right)){
-    $('stick').hidden=false;$('stick').style.left=(point.x-rect.left)+'px';$('stick').style.top=(point.y-rect.top)+'px';
-  }
+  if(point.right)point.holdTimer=setTimeout(()=>{if(!point.moved && points.has(event.pointerId)){point.holding=true;setKeys('hold-'+event.pointerId,[88]);}},300);
 });
 touch.addEventListener('pointermove',event => {
   const point=points.get(event.pointerId);if(!point)return;event.preventDefault();
   const rect=touch.getBoundingClientRect();
-  if(Math.hypot(event.clientX-point.startX,event.clientY-point.startY)>8)point.moved=true;
-  if(battle){relativeX+=(event.clientX-point.x)*640/rect.width;relativeY+=(event.clientY-point.y)*480/rect.height;}
+  if(Math.hypot(event.clientX-point.startX,event.clientY-point.startY)>8){point.moved=true;clearTimeout(point.holdTimer);}
+  if(battle && !point.holding){
+    const scale=Math.min(rect.width/640,rect.height/480);
+    relativeX+=(event.clientX-point.x)/scale;relativeY+=(event.clientY-point.y)/scale;
+  }
   else if(!point.right){
     const dx=event.clientX-point.startX,dy=event.clientY-point.startY,keys=[];
     if(Math.abs(dx)>12)keys.push(dx<0?37:39);if(Math.abs(dy)>12)keys.push(dy<0?38:40);
     setKeys('joystick-'+event.pointerId,keys);
-    $('stick').firstElementChild.style.transform=`translate(${Math.max(-30,Math.min(30,dx))}px,${Math.max(-30,Math.min(30,dy))}px)`;
   }
   point.x=event.clientX;point.y=event.clientY;
 });
 function endPointer(event) {
   const point=points.get(event.pointerId);if(!point)return;
-  if(event.type==='pointerup'&&!battle&&point.right&&!point.moved&&!point.multi)tap(90);
+  clearTimeout(point.holdTimer);
+  if(event.type==='pointerup'&&point.right&&!point.moved&&!point.holding)tap(90);
   points.delete(event.pointerId);setKeys('joystick-'+event.pointerId,[]);
-  if([...points.values()].filter(p=>p.right).length<2)setKeys('cancel',[]);
-  if(![...points.values()].some(p=>!p.right))$('stick').hidden=true;
+  setKeys('hold-'+event.pointerId,[]);
   if(!points.size){relativeX=relativeY=0;setKeys('relative',[]);}
 }
 for(const event of ['pointerup','pointercancel','lostpointercapture'])touch.addEventListener(event,endPointer);
@@ -209,6 +211,11 @@ $('start').addEventListener('click',() => {
   $('canvas').focus();
 });
 $('mode').onclick=()=>switchMode(!battle);
+$('settings').onclick=()=>{
+  releaseAll();$('controls').hidden=!$('controls').hidden;
+  $('settings').setAttribute('aria-expanded',String(!$('controls').hidden));
+  resumeAudio();
+};
 $('sound').onclick=()=>{resumeAudio();report('Звук включён, если разрешён браузером.');};
 $('fullscreen').onclick=fullscreen;
 $('retry').onclick=()=>location.reload();
