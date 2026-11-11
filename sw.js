@@ -1,7 +1,7 @@
-const SHELL = 'undertale-shell-v5';
+const SHELL = 'undertale-shell-v6';
 const DATA = 'undertale-cache-v1';
 const ROOT = new URL('./', self.location).href;
-const STATIC = ['./', './index.html', './style.css', './app.js', './assets.json', './runtime/butterscotch.mjs', './runtime/butterscotch.wasm'];
+const STATIC = ['./', './index.html', './style.css', './app.js', './assets.json', './runtime/butterscotch.mjs', './runtime/audio-buffer.mjs', './runtime/butterscotch.wasm'];
 self.addEventListener('install', event => event.waitUntil((async () => {
   await (await caches.open(SHELL)).addAll(STATIC.map(path => new Request(new URL(path, ROOT).href,{cache:'reload'})));
   await self.skipWaiting();

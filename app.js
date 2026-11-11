@@ -2,13 +2,27 @@ const $ = id => document.getElementById(id);
 const CACHE = 'undertale-cache-v1';
 let runner, database, battle = false, started = false, ready = false;
 let lastSaves = '', saveTimer, relativeX = 0, relativeY = 0;
+let fatal = false;
+const logLines = [];
 const held = new Map(), points = new Map();
 const saveNames = /^(file\d+|undertale\.ini|system_information_\d+|config\.ini)$/i;
 function log(text) {
-  const output = $('startup-log');
-  output.textContent = (output.textContent + text + '\n').split('\n').slice(-80).join('\n');
+  logLines.push(String(text));
+  if(logLines.length>80)logLines.shift();
+  if(!started)$('startup-log').textContent=logLines.join('\n');
 }
 const report = text => { $(started ? 'play-status' : 'status').textContent = text; log(text); };
+function failRuntime(reason) {
+  if(fatal)return;
+  fatal=true;
+  const message=reason ? String(reason) : 'Раннер аварийно завершился';
+  report('Ошибка игры: '+message);
+  $('error-message').textContent='Ошибка игры: '+message;
+  $('error-log').textContent=logLines.join('\n');
+  $('error-panel').hidden=false;
+  clearInterval(saveTimer);
+  releaseAll();
+}
 const resourceState = {module:{loaded:0,total:2141967},memory:{loaded:0,total:0},archives:{loaded:0,total:0},chunks:{loaded:0,total:0},boot:{loaded:0,total:5}};
 function progressRow(name, loaded, total = resourceState[name].total) {
   resourceState[name] = {loaded,total};
@@ -48,7 +62,7 @@ function snapshot() {
   return files;
 }
 async function syncSaves() {
-  if (!runner || !database || !started) return;
+  if (!runner || !database || !started || fatal) return;
   const files = snapshot(), serialized = JSON.stringify(files);
   if (serialized === lastSaves) return;
   // Capture all files in one transaction so deletions are mirrored as well.
@@ -118,9 +132,10 @@ async function prepare() {
     const {default:createRunner} = await import('./runtime/butterscotch.mjs');
     let rejectInstantiation;
     const instantiationFailure = new Promise((_,reject)=>{rejectInstantiation=reject;});
-    runner ||= await Promise.race([createRunner({canvas:$('canvas'),
+    runner ||= await Promise.race([createRunner({canvas:$('canvas'),audioBufferFrames:4096,
       instantiateWasm(imports,receive){WebAssembly.instantiate(compiled,imports).then(instance=>receive(instance)).catch(rejectInstantiation);return {};},
-      print:line => {log(line);console.info('[Runner]',line);},printErr:line => {log(line);console.warn('[Runner]',line);},onAbort:reason => report('Ошибка раннера: ' + reason)}),instantiationFailure]);
+      print:line => {log(line);console.info('[Runner]',line);},printErr:line => {log(line);console.warn('[Runner]',line);},onAbort:failRuntime}),instantiationFailure]);
+    log('Audio: 4096-frame output buffer; native mixer block size preserved');
     progressRow('boot',3);
     runner.FS.mkdirTree('/game');runner.FS.mkdirTree('/saves');
     const total = manifest.files.reduce((sum,file) => sum + file.size,0);
@@ -154,8 +169,12 @@ async function prepare() {
   }
 }
 function resumeAudio() {
+  if(fatal)return;
   const devices = window.miniaudio?.devices || [];
-  for (const device of Object.values(devices)) device?.webaudio?.resume?.().catch(console.warn);
+  for (const device of Object.values(devices)) {
+    const context=device?.webaudio;
+    if(context && ['suspended','interrupted'].includes(context.state))context.resume().catch(console.warn);
+  }
 }
 async function fullscreen() {
   resumeAudio();
@@ -181,6 +200,7 @@ async function fullscreen() {
   }
 }
 function setKeys(source, values) {
+  if(fatal){held.clear();return;}
   const previous = new Set([...held.values()].flat());
   if(values.length) held.set(source,values);else held.delete(source);
   const next = new Set([...held.values()].flat());
@@ -206,7 +226,7 @@ function switchMode(value) {
 window.UndertaleShell = {setBattle:switchMode,damage:() => navigator.vibrate?.(25)};
 const touch = $('touch');
 touch.addEventListener('pointerdown',event => {
-  if(!started || event.pointerType === 'mouse') return;
+  if(!started || fatal || event.pointerType === 'mouse') return;
   event.preventDefault();touch.setPointerCapture(event.pointerId);resumeAudio();
   const rect=touch.getBoundingClientRect();
   const point={x:event.clientX,y:event.clientY,startX:event.clientX,startY:event.clientY,right:event.clientX > rect.left+rect.width/2,moved:false,holding:false};
@@ -243,7 +263,7 @@ for(const event of ['pointerup','pointercancel','lostpointercapture'])touch.addE
 let previousFrame=0;
 function animate(time){
   const dt=Math.min(34,time-previousFrame||16);previousFrame=time;
-  if(battle && started){
+  if(battle && started && !fatal){
     // Keyboard-only approximation at Undertale's usual 30 fps; direct position control needs a runner hook.
     const step=120*dt/1000,keys=[];
     if(Math.abs(relativeX)>.5){keys.push(relativeX<0?37:39);relativeX-=Math.sign(relativeX)*Math.min(Math.abs(relativeX),step);}
@@ -271,7 +291,7 @@ function startGame() {
   const args=['--save-folder','/saves','/game/data.win'];
   const pointers=args.map(value=>runner.stringToNewUTF8(value));
   const argv=runner._malloc(pointers.length*4);pointers.forEach((pointer,index)=>runner.setValue(argv+index*4,pointer,'i32'));
-  runner.ccall('startRunner','number',['number','number'],[pointers.length,argv],{async:true}).then(()=>report('Игра завершена. Обновите страницу для нового запуска.')).catch(error=>report('Ошибка запуска: '+error.message)).finally(()=>{pointers.forEach(pointer=>runner._free(pointer));runner._free(argv);});
+  runner.ccall('startRunner','number',['number','number'],[pointers.length,argv],{async:true}).then(()=>report('Игра завершена. Обновите страницу для нового запуска.')).catch(failRuntime).finally(()=>{if(!fatal){pointers.forEach(pointer=>runner._free(pointer));runner._free(argv);}});
   saveTimer=setInterval(()=>syncSaves().catch(error=>report('Не удалось сохранить: '+error.message)),1000);
   $('canvas').focus();
 }
@@ -305,6 +325,7 @@ matchMedia('(orientation: landscape)').addEventListener('change',event=>{
   releaseAll();
 });
 $('retry').onclick=()=>location.reload();
+$('restart').onclick=()=>location.reload();
 $('export').onclick=async()=>{
   try{
     await syncSaves();

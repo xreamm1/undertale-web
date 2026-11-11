@@ -20,7 +20,9 @@ GitHub Pages, deploy branch `main`, root directory. Assets are relative to the r
 
 ## Third-party runtime and source
 
-Butterscotch is a third-party GameMaker runner, licensed under GNU AGPL v3. Its original authors and source history are retained upstream. This project includes the unmodified official web autobuild downloaded from the upstream `build/main/butterscotch-web.zip` workflow on 2026-11-11.
+Butterscotch is a third-party GameMaker runner, licensed under GNU AGPL v3. Its original authors and source history are retained upstream. This project uses the official web autobuild downloaded from the upstream `build/main/butterscotch-web.zip` workflow on 2026-11-11. The WASM binary is unmodified. The JavaScript bridge has one modified call site importing `runtime/audio-buffer.mjs`; both modified sources are published here under AGPL-3.0 alongside the baseline source archive.
+
+Audio uses an output buffer of at least 4096 frames, subdivided into the native mixer's original blocks. This preserves the size of the native WASM allocation while giving the main thread more time before an audio deadline. It adds output latency (4096 / sample rate seconds per buffer, about 85 ms at 48 kHz); long main-thread stalls can still cause interruptions. Audio resume is requested only for suspended/interrupted contexts. Runtime logging avoids updating hidden DOM during gameplay. Fatal errors display their captured runner log and a restart action; this does not imply that all native runtime aborts have been resolved.
 
 - Source: https://github.com/ButterscotchRunner/Butterscotch
 - Source revision at download: `ec4fc0b0a3669b7ea36e8e37ed94de16f96d1624`
