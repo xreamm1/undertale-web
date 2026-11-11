@@ -6,6 +6,10 @@ Fullscreen requests landscape orientation after entering fullscreen. When orient
 
 ## Controls
 
+Mobile screens have persistent Z (confirm/interact), X (cancel/advance text), and C (menu) buttons on the right. Each captured pointer owns its key state, so movement and actions can be held together. Control reference: https://gamefaqs.gamespot.com/pc/180989-undertale/faqs/81196/controls
+
+All loader text uses local 8bitoperator JVE, with 8bitOperatorPlus for Cyrillic glyphs missing from the original face. Font credits and licensing are in `fonts/NOTICE.txt` and `fonts/OFL.txt`. Both fonts are precached for offline loading.
+
 Arrows move; Z confirms, X cancels, C opens the menu. Touch controls: visible left dynamic joystick; right tap confirms; right hold (300 ms) holds cancel. Moving cancels the pending hold. The gear button reveals settings, save management and the battle-mode switch. In battle mode, the joystick disappears and movement is relative, including over letterbox areas. This stock runner does not export battle/HP state; mode switching is manual, relative keyboard movement is approximate, and automatic damage vibration requires instrumenting the runner. No claim of pixel-perfect finger tracking or complete game compatibility is made.
 
 The pixel-art launch screen has a flat red soul, overall progress and five component rows: streamed WASM module bytes, streamed data.win bytes (memory image), audio bytes (archives), completed files (chunks), and completed initialization stages (host boot). Counts and sizes reflect this build, rather than example numbers from a reference image.

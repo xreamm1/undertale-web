@@ -215,7 +215,7 @@ function drawStick(point,dx=0,dy=0) {
   const length=Math.hypot(dx,dy),scale=length>32?32/length:1;
   stick.firstElementChild.style.transform=`translate(${dx*scale}px,${dy*scale}px)`;
 }
-function releaseAll() { for(const point of points.values())clearTimeout(point.holdTimer);for(const source of [...held.keys()]) setKeys(source,[]);points.clear();relativeX=relativeY=0;drawStick(null); }
+function releaseAll() { for(const point of points.values())clearTimeout(point.holdTimer);for(const source of [...held.keys()]) setKeys(source,[]);points.clear();relativeX=relativeY=0;drawStick(null);document.querySelectorAll('[data-key].pressed').forEach(button=>button.classList.remove('pressed')); }
 function tap(code) {setKeys('tap',[code]);setTimeout(() => setKeys('tap',[]),90);}
 function switchMode(value) {
   releaseAll();battle=value;$('mode').textContent='РЕЖИМ: '+(battle?'БОЙ':'МИР');$('mode').setAttribute('aria-pressed',String(battle));
@@ -281,8 +281,8 @@ window.addEventListener('keyup',event=>setKeys('keyboard-'+event.code,[]));
 window.addEventListener('blur',releaseAll);
 document.addEventListener('visibilitychange',()=>{if(document.hidden){releaseAll();syncSaves().catch(error=>report(error.message));}});
 for(const button of document.querySelectorAll('[data-key]')) {
-  button.addEventListener('pointerdown',event=>{if(!started)return;event.preventDefault();button.setPointerCapture(event.pointerId);setKeys('button-'+button.dataset.key,[Number(button.dataset.key)]);resumeAudio();});
-  for(const type of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(type,()=>setKeys('button-'+button.dataset.key,[]));
+  button.addEventListener('pointerdown',event=>{if(!started||fatal)return;event.preventDefault();button.setPointerCapture(event.pointerId);button.classList.add('pressed');setKeys('button-'+button.dataset.key+'-'+event.pointerId,[Number(button.dataset.key)]);resumeAudio();});
+  for(const type of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(type,event=>{button.classList.remove('pressed');setKeys('button-'+button.dataset.key+'-'+event.pointerId,[]);});
 }
 function startGame() {
   if(!ready||started)return;

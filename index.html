@@ -6,6 +6,8 @@
   <meta name="theme-color" content="#080808">
   <meta name="description" content="Undertale в браузере — WebGL2, офлайн-кэш и сенсорное управление.">
   <title>UNDERTALE · Web</title>
+  <link rel="preload" href="./fonts/8bitoperator-jve.woff" as="font" type="font/woff" crossorigin>
+  <link rel="preload" href="./fonts/8bitoperator-plus.woff" as="font" type="font/woff" crossorigin>
   <link rel="stylesheet" href="./style.css">
   <script type="module" src="./app.js"></script>
 </head>
@@ -41,6 +43,11 @@
         <canvas id="canvas" width="640" height="480" tabindex="0" aria-label="Undertale"></canvas>
         <div id="touch" aria-label="Сенсорное управление"><div id="stick" aria-hidden="true"><i></i></div></div>
       </div>
+      <nav id="touch-actions" aria-label="Кнопки управления игрой">
+        <button data-key="90" aria-label="Z — подтвердить или взаимодействовать" title="Подтвердить / взаимодействовать">Z</button>
+        <button data-key="88" aria-label="X — отменить или ускорить текст" title="Отменить / ускорить текст">X</button>
+        <button data-key="67" aria-label="C — открыть меню" title="Открыть меню">C</button>
+      </nav>
       <button id="settings" aria-label="Настройки и управление" aria-expanded="false" aria-controls="controls">⚙</button>
       <p id="orientation-hint" role="status" hidden>↻ Поверните телефон горизонтально</p>
       <div id="error-panel" role="alert" hidden><p id="error-message"></p><details><summary>Журнал ошибки</summary><pre id="error-log"></pre></details><button id="restart">ПЕРЕЗАПУСТИТЬ</button></div>

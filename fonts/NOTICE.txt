@@ -1,0 +1,11 @@
+8bitoperator JVE
+Copyright nipcen 2011 (font metadata).
+License: Creative Commons Attribution Non-commercial Share Alike 3.0
+https://creativecommons.org/licenses/by-nc-sa/3.0/
+Source: https://github.com/TheVessels/GonerEngine/blob/gaster/fonts/8bitoperator_jve.ttf
+Converted from TTF to WOFF without changing glyph outlines.
+
+8bitOperatorPlus Regular (Cyrillic and additional glyph fallback)
+Source distribution: https://www.dafont.com/8bitoperator-jve.font
+License: SIL Open Font License, bundled in OFL.txt.
+Converted from TTF to WOFF without changing glyph outlines.
